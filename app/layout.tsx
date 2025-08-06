@@ -7,7 +7,7 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: "Acesso aos Conteúdos da Isabella Lua",
   description: "Entre com Facebook ou Instagram para acessar conteúdos exclusivos",
-  generator: "Next.js",
+  generator: "ANOXQUI",
 }
 
 export default function RootLayout({
