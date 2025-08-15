@@ -5,9 +5,9 @@ import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Acesso aos Conteúdos da Isabella Lua",
-  description: "Entre com Facebook ou Instagram para acessar conteúdos exclusivos",
-  generator: "ANOXQUI",
+  title: "Acesso aos Conteúdos da Camila",
+  description: "Assine para acessar conteúdos exclusivos da Camila",
+  generator: "anoxqui",
 }
 
 export default function RootLayout({
