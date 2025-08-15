@@ -406,7 +406,7 @@ export default function GrupoCamila() {
                               <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 mb-2">
                                 <Lock className="w-4 h-4" />
                               </div>
-                              <p className="text-xs font-medium">{index === 2 ? "Vídeo" : `Foto #${index}`}</p>
+                          
                             </div>
                           </div>
                         </div>
