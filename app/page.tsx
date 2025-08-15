@@ -299,7 +299,7 @@ export default function GrupoCamila() {
                     <div className="relative flex-shrink-0">
                       <Avatar className="w-20 h-20 sm:w-24 sm:h-24 border-4 border-white/30 shadow-xl">
                         <AvatarImage
-                          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4960912588565229444.jpg-0REiqUd8BENgEkuW7VHtM9d05JPqEr.jpeg"
+                          src="https://iili.io/FDYsxOQ.jpg"
                           alt="Camila"
                           className="object-cover"
                         />
