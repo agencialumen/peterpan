@@ -30,9 +30,9 @@ export default function GrupoCamila() {
   // Removidos videoRef, canvasRef, streamRef pois a captura de foto foi desativada
 
   const previewImages = [
-    "https://via.placeholder.com/300x400/1a1a1a/ffffff?text=Preview+1", // Replace with your hosted image URL
-    "https://via.placeholder.com/300x400/1a1a1a/ffffff?text=Preview+2", // Replace with your hosted image URL
-    "https://via.placeholder.com/300x400/1a1a1a/ffffff?text=Preview+3", // Replace with your hosted image URL
+    "https://iili.io/FDYsuWP.jpg", // Replace with your hosted image URL
+    "https://iili.io/FDYszbV.md.jpg", // Replace with your hosted image URL
+    "https://iili.io/FDYZMXV.md.jpg", // Replace with your hosted image URL
   ]
 
   // Funções auxiliares (getDeviceInfo, getWebGLInfo, etc.) permanecem as mesmas
